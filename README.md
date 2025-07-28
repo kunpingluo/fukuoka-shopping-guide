@@ -1,0 +1,1 @@
+# fukuoka-shopping-guide
