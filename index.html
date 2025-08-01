@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fukuoka Shopping Guide</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Noto+Sans+KR:wght@300;400;700;900&family=Noto+Sans+SC:wght@300;400;700;900&family+Sans+TC:wght@300;400;700;900&display=swap');
         
         * {
             margin: 0;
@@ -14,14 +14,14 @@
         }
         
         body {
-            font-family: 'Noto Sans JP', sans-serif;
+            font-family: 'Noto Sans SC', 'Noto Sans TC', 'Noto Sans JP', 'Noto Sans KR', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
         
         .poster {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
@@ -30,10 +30,42 @@
             position: relative;
         }
         
+        .language-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .toggle-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .toggle-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .toggle-btn.active {
+            background: rgba(255,255,255,0.9);
+            color: #333;
+        }
+        
         .header {
             background: linear-gradient(45deg, #ff6b6b, #ee5a52, #ff8a80);
             color: white;
-            padding: 40px 30px 30px;
+            padding: 60px 30px 40px;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -56,16 +88,16 @@
         }
         
         .title {
-            font-size: 3.5em;
+            font-size: 4em;
             font-weight: 900;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             position: relative;
             z-index: 1;
         }
         
         .subtitle {
-            font-size: 1.2em;
+            font-size: 1.4em;
             opacity: 0.9;
             font-weight: 300;
             position: relative;
@@ -73,11 +105,11 @@
         }
         
         .content {
-            padding: 40px 30px;
+            padding: 50px 30px;
         }
         
         .area {
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             animation: slideIn 0.6s ease-out forwards;
             opacity: 0;
             transform: translateY(30px);
@@ -97,11 +129,11 @@
         .area-header {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
-            padding: 15px 20px;
+            margin-bottom: 25px;
+            padding: 20px 25px;
             border-radius: 15px;
             font-weight: 700;
-            font-size: 1.3em;
+            font-size: 1.4em;
             color: white;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
@@ -111,27 +143,27 @@
         .other { background: linear-gradient(45deg, #a8edea, #fed6e3); }
         
         .area-icon {
-            width: 30px;
-            height: 30px;
-            margin-right: 15px;
+            width: 35px;
+            height: 35px;
+            margin-right: 20px;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2em;
+            font-size: 1.3em;
         }
         
         .shops-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
         }
         
         .shop {
             background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 4px solid;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -155,7 +187,7 @@
         
         .shop:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
         
         .tenjin .shop { border-left-color: #4facfe; }
@@ -164,49 +196,92 @@
         
         .shop-name {
             font-weight: 700;
-            font-size: 1.1em;
+            font-size: 1.2em;
             color: #2c3e50;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
+        
+        .shop-languages {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .shop-lang-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .lang-label {
+            min-width: 60px;
+            font-size: 0.75em;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+        }
+        
+        .lang-zh-cn { background: #e74c3c; }
+        .lang-zh-tw { background: #9b59b6; }
+        .lang-ja { background: #3498db; }
+        .lang-ko { background: #2ecc71; }
+        .lang-en { background: #f39c12; }
         
         .shop-category {
             color: #7f8c8d;
             font-size: 0.9em;
-            margin-bottom: 8px;
+            flex: 1;
         }
         
         .shop-hours {
             color: #e74c3c;
             font-weight: 600;
-            font-size: 0.9em;
+            font-size: 1em;
             display: flex;
             align-items: center;
+            margin-top: 12px;
+            justify-content: center;
+            padding: 8px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
         }
         
         .shop-hours::before {
             content: '🕒';
-            margin-right: 5px;
+            margin-right: 8px;
         }
         
         .footer {
             background: linear-gradient(45deg, #2c3e50, #34495e);
             color: white;
             text-align: center;
-            padding: 20px;
-            font-size: 0.9em;
-            opacity: 0.8;
+            padding: 30px;
+            font-size: 1em;
+        }
+        
+        .footer-content {
+            margin-bottom: 15px;
         }
         
         .author {
-            margin-top: 10px;
-            font-size: 0.85em;
-            opacity: 0.7;
+            font-size: 0.9em;
+            opacity: 0.8;
             font-style: italic;
+        }
+        
+        .multilingual-mode {
+            display: block;
+        }
+        
+        .single-lang-mode {
+            display: none;
         }
         
         @media (max-width: 768px) {
             .title {
-                font-size: 2.5em;
+                font-size: 2.8em;
             }
             
             .shops-grid {
@@ -216,62 +291,314 @@
             .content {
                 padding: 30px 20px;
             }
+            
+            .language-toggle {
+                position: relative;
+                top: 0;
+                right: 0;
+                justify-content: center;
+                margin-bottom: 20px;
+                flex-wrap: wrap;
+            }
+            
+            .shop-lang-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .lang-label {
+                min-width: auto;
+            }
         }
     </style>
 </head>
 <body>
     <div class="poster">
         <div class="header">
-            <h1 class="title">福岡</h1>
-            <p class="subtitle">FUKUOKA SHOPPING GUIDE</p>
+            <div class="language-toggle">
+                <button class="toggle-btn active" onclick="toggleMultilingual()">多语言显示</button>
+            </div>
+            
+            <h1 class="title">福岡 FUKUOKA</h1>
+            <p class="subtitle">福冈购物指南 | 福岡購物指南 | 福岡ショッピングガイド | 후쿠오카 쇼핑 가이드 | FUKUOKA SHOPPING GUIDE</p>
         </div>
         
         <div class="content">
             <div class="area tenjin">
                 <div class="area-header">
                     <div class="area-icon">🟦</div>
-                    <span>TENJIN AREA</span>
+                    <span>天神地区 | 天神地區 | 天神エリア | 텐진 지역 | TENJIN AREA</span>
                 </div>
                 <div class="shops-grid">
                     <div class="shop">
                         <div class="shop-name">Mina Tenjin</div>
-                        <div class="shop-category">Fashion</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">时尚服装</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">時尚服裝</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">ファッション</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">패션</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Fashion</span>
+                            </div>
+                        </div>
                         <div class="shop-hours">10:00–20:00</div>
                     </div>
+                    
                     <div class="shop">
                         <div class="shop-name">PARCO</div>
-                        <div class="shop-category">Cosmetics, skincare, fashion</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">化妆品，护肤品，时尚服装</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">化妝品，護膚品，時尚服裝</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">コスメ，スキンケア，ファッション</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">화장품, 스킨케어, 패션</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Cosmetics, skincare, fashion</span>
+                            </div>
+                        </div>
                         <div class="shop-hours">10:00–20:00</div>
                     </div>
+                    
                     <div class="shop">
                         <div class="shop-name">Tenjin Underground Mall</div>
-                        <div class="shop-category">Fashion, snacks, daily goods</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">时尚服装，小食，日用品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">時尚服裝，小食，日用品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">ファッション，スナック，日用品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">패션, 스낵, 생활용품</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Fashion, snacks, daily goods</span>
+                            </div>
+                        </div>
                         <div class="shop-hours">10:00–20:00</div>
                     </div>
+                    
                     <div class="shop">
                         <div class="shop-name">Iwataya</div>
-                        <div class="shop-category">Luxury fashion, fragrances</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">奢侈时装，香水</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">奢侈時裝，香水</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">高級ファッション，フレグランス</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">럭셔리 패션, 향수</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Luxury fashion, fragrances</span>
+                            </div>
+                        </div>
                         <div class="shop-hours">10:00–20:00</div>
                     </div>
+                    
                     <div class="shop">
                         <div class="shop-name">Mitsukoshi</div>
-                        <div class="shop-category">Fashion, food, beauty</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">时尚服装，美食，美妆</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">時尚服裝，美食，美妝</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">ファッション，フード，ビューティー</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">패션, 음식, 뷰티</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Fashion, food, beauty</span>
+                            </div>
+                        </div>
                         <div class="shop-hours">10:00–20:00</div>
                     </div>
+                    
                     <div class="shop">
-                        <div class="shop-name">Loft (Tenjin)</div>
-                        <div class="shop-category">Lifestyle goods, gifts</div>
+                        <div class="shop-name">Luz Fukuoka Tenjin</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">运动用品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">運動用品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">スポーツ用品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">스포츠용품</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Sports goods</span>
+                            </div>
+                        </div>
                         <div class="shop-hours">10:00–20:00</div>
                     </div>
+                    
                     <div class="shop">
-                        <div class="shop-name">Sports Depot / Alpen</div>
-                        <div class="shop-category">Sportswear, anime goods</div>
+                        <div class="shop-name">Alpen Fukuoka</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">运动服装，动漫商品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">運動服裝，動漫商品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">スポーツウェア，アニメグッズ</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">스포츠웨어, 애니메 굿즈</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Sportswear, anime goods</span>
+                            </div>
+                        </div>
                         <div class="shop-hours">10:00–20:00</div>
                     </div>
+                    
                     <div class="shop">
                         <div class="shop-name">ONE FUKUOKA BLDG.</div>
-                        <div class="shop-category">Chanel, Nike, cafes, food hall</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">香奈儿，耐克，咖啡厅，美食广场</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">香奈兒，耐克，咖啡廳，美食廣場</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">シャネル，ナイキ，カフェ，フードホール</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">샤넬, 나이키, 카페, 푸드홀</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Chanel, Nike, cafes, food hall</span>
+                            </div>
+                        </div>
                         <div class="shop-hours">11:00–20:00</div>
+                    </div>
+                    
+                    <div class="shop">
+                        <div class="shop-name">Solaria Stage</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">时尚服装，美妆，餐厅</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">時尚服裝，美妝，餐廳</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">ファッション，コスメ，レストラン</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">패션, 화장품, 레스토랑</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Fashion, cosmetics, restaurants</span>
+                            </div>
+                        </div>
+                        <div class="shop-hours">10:00–21:00</div>
+                    </div>
+                    
+                    <div class="shop">
+                        <div class="shop-name">Solaria Plaza</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">购物中心，餐饮，娱乐</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">購物中心，餐飲，娛樂</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">ショッピングセンター，グルメ，エンターテイメント</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">쇼핑센터, 음식, 엔터테인먼트</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Shopping center, dining, entertainment</span>
+                            </div>
+                        </div>
+                        <div class="shop-hours">10:00–21:00</div>
                     </div>
                 </div>
             </div>
@@ -279,27 +606,113 @@
             <div class="area hakata">
                 <div class="area-header">
                     <div class="area-icon">🟨</div>
-                    <span>HAKATA STATION AREA</span>
+                    <span>博多站地区 | 博多站地區 | 博多駅エリア | 하카타역 지역 | HAKATA STATION AREA</span>
                 </div>
                 <div class="shops-grid">
                     <div class="shop">
                         <div class="shop-name">AMU PLAZA Hakata</div>
-                        <div class="shop-category">Fashion, cosmetics, shoes</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">时尚服装，化妆品，鞋类</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">時尚服裝，化妝品，鞋類</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">ファッション，コスメ，シューズ</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">패션, 화장품, 신발</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Fashion, cosmetics, shoes</span>
+                            </div>
+                        </div>
                         <div class="shop-hours">10:00–20:00</div>
                     </div>
+                    
                     <div class="shop">
                         <div class="shop-name">Hakata Hankyu</div>
-                        <div class="shop-category">Fashion, food, skincare</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">时尚服装，美食，护肤品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">時尚服裝，美食，護膚品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">ファッション，フード，スキンケア</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">패션, 음식, 스킨케어</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Fashion, food, skincare</span>
+                            </div>
+                        </div>
                         <div class="shop-hours">10:00–20:00</div>
                     </div>
+                    
                     <div class="shop">
                         <div class="shop-name">Canal City Hakata</div>
-                        <div class="shop-category">Fashion, ramen, cinema, souvenirs</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">時尚服裝，拉麵，電影院，紀念品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">ファッション，ラーメン，映画館，お土産</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">패션, 라멘, 영화관, 기념품</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Fashion, ramen, cinema, souvenirs</span>
+                            </div>
+                        </div>
                         <div class="shop-hours">10:00–21:00</div>
                     </div>
+                    
                     <div class="shop">
                         <div class="shop-name">Bic Camera + Loft</div>
-                        <div class="shop-category">Electronics, pharmacy, outdoor gear</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">电子产品，药妆，户外用品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">電子產品，藥妝，戶外用品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">家電，ドラッグストア，アウトドア用品</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">전자제품, 약국, 아웃도어 용품</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">Electronics, pharmacy, outdoor gear</span>
+                            </div>
+                        </div>
                         <div class="shop-hours">9:30–22:00</div>
                     </div>
                 </div>
@@ -308,12 +721,33 @@
             <div class="area other">
                 <div class="area-header">
                     <div class="area-icon">🟩</div>
-                    <span>OTHER AREA</span>
+                    <span>其他地区 | 其他地區 | その他エリア | 기타 지역 | OTHER AREA</span>
                 </div>
                 <div class="shops-grid">
                     <div class="shop">
                         <div class="shop-name">LaLaport Fukuoka</div>
-                        <div class="shop-category">UNIQLO, IKEA, Pokémon Center, food court</div>
+                        <div class="shop-languages">
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-cn">简中</span>
+                                <span class="shop-category">优衣库，宜家，宝可梦中心，美食广场</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-zh-tw">繁中</span>
+                                <span class="shop-category">優衣庫，宜家，寶可夢中心，美食廣場</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ja">日語</span>
+                                <span class="shop-category">ユニクロ，IKEA，ポケモンセンター，フードコート</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-ko">韓語</span>
+                                <span class="shop-category">유니클로, 이케아, 포켓몬센터, 푸드코트</span>
+                            </div>
+                            <div class="shop-lang-row">
+                                <span class="lang-label lang-en">英語</span>
+                                <span class="shop-category">UNIQLO, IKEA, Pokémon Center, food court</span>
+                            </div>
+                        </div>
                         <div class="shop-hours">10:00–21:00</div>
                     </div>
                 </div>
@@ -321,9 +755,21 @@
         </div>
         
         <div class="footer">
-            Experience the best shopping destinations in Fukuoka
+            <div class="footer-content">
+                体验福冈最佳购物目的地 | 體驗福岡最佳購物目的地 | 福岡の最高のショッピングスポットを体験 | 후쿠오카 최고의 쇼핑 명소를 경험하세요 | Experience the best shopping destinations in Fukuoka
+            </div>
             <div class="author">Created by LUO KUNPING</div>
         </div>
     </div>
+
+    <script>
+        let isMultilingual = true;
+
+        function toggleMultilingual() {
+            // 这个版本默认就是多语言显示模式
+            // 可以根据需要添加切换功能
+            console.log('多语言模式已激活');
+        }
+    </script>
 </body>
 </html>
